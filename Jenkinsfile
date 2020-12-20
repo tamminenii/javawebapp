@@ -33,5 +33,19 @@ pipeline {
                 slackSend channel: 'keyspace-team', message: 'Dev Deployment was successful'
             }
         }
+        stage ('DEV Approve for QA') {
+            steps {
+                echo "Taking approval from DEV Manager for QA Deployment"
+                timeout(time: 7, unit: 'DAYS') {
+                    input message: 'Do you want to deploy into QA?', submitter: 'admin'
+                }
+            }
+        } 
+        stage ('QA Deploy') {
+            steps {
+                echo "deploying to DEV Env "
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-user', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+            }
+        }
    }
 }
