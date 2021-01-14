@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Dev Deploy'){
             steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcatserver', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-user', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
             }
         }
         stage('Dev apprl for QA') {
@@ -37,7 +37,7 @@ pipeline {
         }
         stage('QA Deploy'){
             steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcatserver', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-user', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
             }
         }
     }
