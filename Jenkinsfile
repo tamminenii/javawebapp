@@ -17,14 +17,14 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                withSonarQubeEnv('SonarQubeServer') {
+                withSonarQubeEnv('SonarQube') {
                 sh 'mvn sonar:sonar -f pom.xml'
                 }
             }
         }
         stage('Dev Deploy'){
             steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-user', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat9', path: '', url: 'http://3.215.85.234:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
             }
         }
         stage('Dev apprl for QA') {
@@ -37,7 +37,7 @@ pipeline {
         }
         stage('QA Deploy'){
             steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-user', path: '', url: 'http://3.219.228.196:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat9', path: '', url: 'http://3.215.85.234:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
             }
         }
     }
