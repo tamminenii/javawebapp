@@ -1,33 +1,32 @@
 pipeline {
-    
     agent any
     tools{
-        maven 'Maven3'
+        maven 'Maven3.8.2'
     }
-    stages{
-        stage('checkout') {
+    stages {
+        stage("checkout") {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/keyspaceits/javawebapp']]])
+               checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/keyspaceits/javawebapp.git']]]) 
             }
         }
-        stage('build'){
+        stage("build") {
             steps {
                 sh 'mvn clean install -f pom.xml'
             }
         }
-        stage('Code Quality') {
+        stage("CodeQuality") {
             steps {
                 withSonarQubeEnv('SonarQube') {
                 sh 'mvn sonar:sonar -f pom.xml'
                 }
             }
         }
-        stage('Dev Deploy'){
-            steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcat9', path: '', url: 'http://3.215.85.234:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+        stage("dev deploy") {
+            steps {
+                deploy adapters: [tomcat9(credentialsId: 'deployer', path: '', url: 'http://192.168.1.29:8080')], contextPath: null, war: '**/*.war'
             }
         }
-        stage('Dev apprl for QA') {
+		stage('Dev apprl for QA') {
             steps {
                 echo "taking approval from Dev Manager"
                 timeout(time: 7, unit: 'DAYS') {
@@ -37,8 +36,9 @@ pipeline {
         }
         stage('QA Deploy'){
             steps{
-                deploy adapters: [tomcat9(credentialsId: 'tomcat9', path: '', url: 'http://3.215.85.234:8080/')], contextPath: 'CounterWebApp', war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'deployer', path: '', url: 'http://192.168.1.29:8080')], contextPath: null, war: '**/*.war'
             }
         }
+        
     }
 }
