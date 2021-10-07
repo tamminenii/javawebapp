@@ -23,7 +23,7 @@ pipeline {
         }
         stage("dev deploy") {
             steps {
-                deploy adapters: [tomcat9(credentialsId: 'deployer', path: '', url: 'http://192.168.1.29:8080')], contextPath: null, war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'deployer', path: '', url: 'http://54.164.159.39:8080')], contextPath: null, war: '**/*.war'
             }
         }
 		stage('Dev apprl for QA') {
