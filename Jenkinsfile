@@ -1,44 +1,23 @@
 pipeline {
     agent any
-    tools{
-        maven 'Maven3.8.2'
-    }
+    tools {
+    maven 'Maven3.8.4'	
+	}
     stages {
-        stage("checkout") {
+        stage('Checkout') {
             steps {
-               checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/keyspaceits/javawebapp.git']]]) 
+                checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/keyspaceits/javawebapp.git']]])
             }
         }
-        stage("build") {
+        stage('Build') {
             steps {
                 sh 'mvn clean install -f pom.xml'
             }
         }
-        stage("CodeQuality") {
+        stage('Deploy to Tomcat') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                sh 'mvn sonar:sonar -f pom.xml'
-                }
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-deployer', path: '', url: 'http://192.168.1.36/')], contextPath: null, war: '**/*.war'
             }
         }
-        stage("dev deploy") {
-            steps {
-                deploy adapters: [tomcat9(credentialsId: 'deployer', path: '', url: 'http://54.164.159.39:8080')], contextPath: null, war: '**/*.war'
-            }
-        }
-		stage('Dev apprl for QA') {
-            steps {
-                echo "taking approval from Dev Manager"
-                timeout(time: 7, unit: 'DAYS') {
-                    input message: 'Do you want to proceed to QA?', submitter:'admin'
-                }
-            }
-        }
-        stage('QA Deploy'){
-            steps{
-                deploy adapters: [tomcat9(credentialsId: 'deployer', path: '', url: 'http://54.164.159.39:8080')], contextPath: null, war: '**/*.war'
-            }
-        }
-        
     }
 }
