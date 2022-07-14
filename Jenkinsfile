@@ -1,23 +1,24 @@
 pipeline {
     agent any
     tools {
-    maven 'Maven3.8.4'	
-	}
+        maven 'Maven3.8.6'
+    }
     stages {
-        stage('Checkout') {
+        stage('checkout') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/keyspaceits/javawebapp.git']]])
             }
         }
-        stage('Build') {
-            steps {
+        stage('build'){
+            steps{
                 sh 'mvn clean install -f pom.xml'
             }
         }
-        stage('Deploy to Tomcat') {
-            steps {
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-deployer', path: '', url: 'http://192.168.1.36/')], contextPath: null, war: '**/*.war'
+        stage('deploy'){
+            steps{
+                deploy adapters: [tomcat9(credentialsId: 'tomcat-deployer', path: '', url: 'http://192.168.1.200:8080')], contextPath: null, war: '**/*.war'
             }
         }
+        
     }
 }
