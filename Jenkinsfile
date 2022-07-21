@@ -14,13 +14,6 @@ pipeline {
                 sh 'mvn clean install -f pom.xml'
             }
         }
-        stage('CodeQulity'){
-            steps {
-            withSonarQubeEnv('SonarQube'){
-            sh 'mvn clean install -f pom.xml sonar:sonar' 
-              }
-            }
-        }
         stage('deploy'){
             steps{
                 deploy adapters: [tomcat9(credentialsId: 'tomcat-deployer', path: '', url: 'http://192.168.1.200:8080')], contextPath: null, war: '**/*.war'
